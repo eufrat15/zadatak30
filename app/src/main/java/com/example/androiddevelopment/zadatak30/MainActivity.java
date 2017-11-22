@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,6 +18,7 @@ import com.example.androiddevelopment.zadatak30.model.Glumac;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -85,6 +89,68 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void addItem() throws SQLException {
+
+        ListView listview = (ListView)findViewById(R.id.listaGlumaca);
+        List<Glumac> list = getDatabaseHelper().getGlumacDao().queryForAll();
+        ArrayAdapter<Glumac> dataAdapter = new ArrayAdapter<>(this, R.layout.list_item, list);
+        listview.setAdapter(dataAdapter);
+
+        final EditText ime = (EditText) findViewById(R.id.ime);
+        final EditText biografija = (EditText) findViewById(R.id.bio);
+        final EditText ocena = (EditText) findViewById(R.id.ocena);
+        final EditText godina = (EditText) findViewById(R.id.godina);
+
+        Button ok = (Button) findViewById(R.id.ok);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    String glumacIme = ime.getText().toString();
+                    String glumacBiografija = biografija.getText().toString();
+                    double glumacOcena = Double.parseDouble(ocena.getText().toString());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+                    Date datum = null;
+                    String s = sdf.parse(findViewById(godina).toString());
+
+                    Glumac glumac = new Glumac();
+                    glumac.setIme(glumacIme);
+                    glumac.setBiografija(glumacBiografija);
+                    glumac.setOcena(glumacOcena);
+                    glumac.setGodina(glumacGodina);
+
+
+                    getDatabaseHelper().getProductDao().create(product);
+                    refresh();
+                    Toast.makeText(MainActivity.this, "Product inserted", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                    reset();
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+
+                }catch (NumberFormatException ee){
+                    Toast.makeText(MainActivity.this, "Rating more biti broj", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        if (dataAdapter.isEmpty()){
+            Toast.makeText(MainActivity.this, "Ne postoji ni jedna uneta kategorija. Prvo unestie kategoriju", Toast.LENGTH_SHORT).show();
+        }
+
+        dialog.show();
     }
 
 }
