@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Zadatak30</string>
+    <string name="activity_main_toolbar_title">Glumac</string>
+    <string name="fragment_detal_action_add">add</string>
+    <string name="fragment_detal_action_about">About</string>
+    <string name="fragment_detal_action_preference">preference</string>
+</resources>
