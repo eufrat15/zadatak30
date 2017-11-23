@@ -1,11 +1,14 @@
 package com.example.androiddevelopment.zadatak30.model;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
 import static com.example.androiddevelopment.zadatak30.model.Glumac.DATABASE_TABLE;
+import static com.example.androiddevelopment.zadatak30.model.Glumac.FIELDS_FILM;
 
 /**
  * Created by androiddevelopment on 22.11.17..
@@ -31,13 +34,13 @@ public class Glumac {
     private double ocena;
     @DatabaseField(columnName = FIELDS_DATUM)
     private Date datum;
-    @DatabaseField(columnName = FIELDS_FILM, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-    private Film film;
+    @ForeignCollectionField(columnName = FIELDS_FILM, eager = true)
+    private ForeignCollection<Film>film;
 
     public Glumac() {
     }
 
-    public Glumac(int id, String ime, String biografija, double ocena, Date datum, Film film) {
+    public Glumac(int id, String ime, String biografija, double ocena, Date datum, ForeignCollection<Film> film) {
         this.id = id;
         this.ime = ime;
         this.biografija = biografija;
@@ -86,11 +89,11 @@ public class Glumac {
         this.datum = datum;
     }
 
-    public Film getFilm() {
+    public ForeignCollection<Film> getFilm() {
         return film;
     }
 
-    public void setFilm(Film film) {
+    public void setFilm(ForeignCollection<Film> film) {
         this.film = film;
     }
 

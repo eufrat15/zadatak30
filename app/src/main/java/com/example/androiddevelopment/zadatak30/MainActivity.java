@@ -1,5 +1,6 @@
 package com.example.androiddevelopment.zadatak30;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.example.androiddevelopment.zadatak30.model.Glumac;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -48,8 +50,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                Intent intent = new Intent(MainActivity.this, AddGlumac.class);
-                startActivity(intent);
+                try {
+                    addItem();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.action_preference:
 
@@ -98,10 +103,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<Glumac> dataAdapter = new ArrayAdapter<>(this, R.layout.list_item, list);
         listview.setAdapter(dataAdapter);
 
-        final EditText ime = (EditText) findViewById(R.id.ime);
-        final EditText biografija = (EditText) findViewById(R.id.bio);
-        final EditText ocena = (EditText) findViewById(R.id.ocena);
-        final EditText godina = (EditText) findViewById(R.id.godina);
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(R.layout.add_glumac);
+        final EditText ime = (EditText) dialog.findViewById(R.id.ime);
+        final EditText biografija = (EditText) dialog.findViewById(R.id.bio);
+        final EditText ocena = (EditText) dialog.findViewById(R.id.ocena);
+        final EditText godina = (EditText) dialog.findViewById(R.id.godina);
 
         Button ok = (Button) findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
@@ -113,27 +120,30 @@ public class MainActivity extends AppCompatActivity {
                     double glumacOcena = Double.parseDouble(ocena.getText().toString());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
                     Date datum = null;
-                    String s = sdf.parse(findViewById(godina).toString());
+                    try {
+                        datum = sdf.parse(datum.toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
                     Glumac glumac = new Glumac();
                     glumac.setIme(glumacIme);
                     glumac.setBiografija(glumacBiografija);
                     glumac.setOcena(glumacOcena);
-                    glumac.setGodina(glumacGodina);
+                    glumac.setDatum(datum);
 
 
-                    getDatabaseHelper().getProductDao().create(product);
+                    getDatabaseHelper().getGlumacDao().create(glumac);
                     refresh();
-                    Toast.makeText(MainActivity.this, "Product inserted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Glumac ubacen", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
 
-                    reset();
 
                 } catch (SQLException e) {
                     e.printStackTrace();
 
                 }catch (NumberFormatException ee){
-                    Toast.makeText(MainActivity.this, "Rating more biti broj", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Ocena mora biti broj", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -145,10 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
-        if (dataAdapter.isEmpty()){
-            Toast.makeText(MainActivity.this, "Ne postoji ni jedna uneta kategorija. Prvo unestie kategoriju", Toast.LENGTH_SHORT).show();
-        }
 
         dialog.show();
     }

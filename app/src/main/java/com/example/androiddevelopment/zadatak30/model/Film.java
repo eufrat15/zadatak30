@@ -17,6 +17,7 @@ public class Film {
     public static final String FIELDS_NAZIV="naziv";
     public static final String FIELDS_ZANR="zanr";
     public static final String FIELDS_GODINA="godina";
+    public static final String FIELDS_GLUMAC="glumac";
 
     @DatabaseField(columnName = FIELDS_ID2, generatedId = true)
     private int id;
@@ -26,20 +27,27 @@ public class Film {
     private String zanr;
     @DatabaseField(columnName = FIELDS_GODINA)
     private int godina;
+    @DatabaseField(columnName = FIELDS_GLUMAC, foreign = true, foreignAutoRefresh = true)
+    private Glumac glumac;
 
     public Film() {
     }
 
-    public Film(int id, String naziv, String zanr, int godina) {
+    public Film(int id, String naziv, String zanr, int godina, Glumac glumac) {
         this.id = id;
         this.naziv = naziv;
         this.zanr = zanr;
         this.godina = godina;
+        this.glumac = glumac;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNaziv() {
         return naziv;
@@ -63,6 +71,14 @@ public class Film {
 
     public void setGodina(int godina) {
         this.godina = godina;
+    }
+
+    public Glumac getGlumac() {
+        return glumac;
+    }
+
+    public void setGlumac(Glumac glumac) {
+        this.glumac = glumac;
     }
 
     @Override
