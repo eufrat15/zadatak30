@@ -22,8 +22,8 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/godina"
-        android:hint="Godina rodjenja"
+        android:id="@+id/datum"
+        android:hint="Datum rodjenja"
         android:inputType="date"/>
 
     <LinearLayout

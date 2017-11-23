@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.androiddevelopment.zadatak30.db.DatabaseHelper;
@@ -21,6 +22,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -98,19 +100,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void addItem() throws SQLException {
 
-        ListView listview = (ListView)findViewById(R.id.listaGlumaca);
-        List<Glumac> list = getDatabaseHelper().getGlumacDao().queryForAll();
-        ArrayAdapter<Glumac> dataAdapter = new ArrayAdapter<>(this, R.layout.list_item, list);
-        listview.setAdapter(dataAdapter);
 
         final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.add_glumac);
         final EditText ime = (EditText) dialog.findViewById(R.id.ime);
         final EditText biografija = (EditText) dialog.findViewById(R.id.bio);
         final EditText ocena = (EditText) dialog.findViewById(R.id.ocena);
-        final EditText godina = (EditText) dialog.findViewById(R.id.godina);
+        final EditText datum = (EditText) dialog.findViewById(R.id.datum);
 
-        Button ok = (Button) findViewById(R.id.ok);
+        List<String>  glumciIme = new ArrayList<>();
+
+        List<Glumac> glumac = getDatabaseHelper().getGlumacDao().queryForAll();
+        for (Glumac g : glumac)
+            glumciIme.add(g.getIme());
+
+        final ListView listaGlumaca = (ListView) dialog.findViewById(R.id.listaGlumaca);
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<>(MainActivity.this, R.layout.list_item, glumciIme);
+        listaGlumaca.setAdapter(dataAdapter2);
+
+        Button ok = (Button) dialog.findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
                     String glumacBiografija = biografija.getText().toString();
                     double glumacOcena = Double.parseDouble(ocena.getText().toString());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
-                    Date datum = null;
+                    Date datum1 = null;
                     try {
-                        datum = sdf.parse(datum.toString());
+                        datum1 = sdf.parse(datum.toString());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -130,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     glumac.setIme(glumacIme);
                     glumac.setBiografija(glumacBiografija);
                     glumac.setOcena(glumacOcena);
-                    glumac.setDatum(datum);
+                    glumac.setDatum(datum1);
 
 
                     getDatabaseHelper().getGlumacDao().create(glumac);
